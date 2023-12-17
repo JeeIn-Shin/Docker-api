@@ -7,9 +7,8 @@ export class ContainerService {
 
   constructor() {
     this.docker = new Dockerode({
-      //Docker 호스트의 IP 및 포트를 지정
-      // '/var/run/docker.sock' - 테스트용으로 사용
-      socketPath: '/var/run/docker.sock',
+      host: '192.168.249.128',
+      port: 2375,
     });
   }
 
@@ -21,18 +20,29 @@ export class ContainerService {
         containers.map(async (containerInfo) => {
           const container = this.docker.getContainer(containerInfo.Id);
           const data = await container.inspect();
-
+          const networks = data.NetworkSettings.Networks;
           // 원하는 정보 추출 (IP 주소, 이름, MAC 주소 등)
-          const ipAddress = data.NetworkSettings.IPAddress;
+          class conNetInfo {
+            ipAddress: string;
+            macAddress: string;
+            networkId: string;
+          }
+
+          for (const key in networks) {
+            if (Object.prototype.hasOwnProperty.call(networks, key)) {
+              conNetInfo.prototype.ipAddress = networks[key].IPAddress;
+              conNetInfo.prototype.macAddress = networks[key].MacAddress;
+              conNetInfo.prototype.networkId = networks[key].NetworkID;
+            }
+          }
+
           const containerName = data.Name.replace('/', ''); // 컨테이너 이름 앞의 슬래시 제거
-          const macAddress = data.NetworkSettings.MacAddress;
-          const networkId = data.NetworkSettings.Networks[data.Id];
 
           return {
             containerName: containerName,
-            containerIP: ipAddress,
-            containerMac: macAddress,
-            networkID: networkId,
+            containerIP: conNetInfo.prototype.ipAddress,
+            containerMac: conNetInfo.prototype.macAddress,
+            networkID: conNetInfo.prototype.networkId,
           };
         }),
       );

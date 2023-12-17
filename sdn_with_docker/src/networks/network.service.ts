@@ -8,9 +8,8 @@ export class NetworkService {
 
   constructor() {
     this.docker = new Dockerode({
-      //Docker 호스트의 IP 및 포트를 지정
-      // '/var/run/docker.sock' - 테스트용으로 사용
-      socketPath: '',
+      host: '192.168.249.128',
+      port: 2375,
     });
   }
 
@@ -27,6 +26,7 @@ export class NetworkService {
           ? Object.keys(network.Containers)
           : [];
 
+        console.log(network);
         return {
           networkName: network.Name,
           networkID: network.Id,
