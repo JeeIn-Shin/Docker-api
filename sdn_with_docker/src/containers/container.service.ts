@@ -60,42 +60,30 @@ export class ContainerService {
     containerName: string,
     networkId: string,
   ): Promise<any> {
-    try {
-      const container = await this.docker.createContainer({
-        Image: image,
-        name: containerName,
-        HostConfig: {
-          PortBindings: '8082', //특정 포트번호 설정 임시로 3000으로 설정해둠
-          NetworkMode: networkId,
-        },
-      });
-
-      await container.start(); // 컨테이너 실행
-
-      const data = await container.inspect();
-
-      const containerInfo = {
-        containerName: data.Name.replace('/', ''),
-        containerIP: data.NetworkSettings.IPAddress,
-        containerMac: data.NetworkSettings.MacAddress,
-      };
-
-      return containerInfo;
-    } catch (error) {
-      throw new Error(`컨테이너 배포 중 오류가 발생했습니다: ${error.message}`);
-    }
-  }
-
-  // 임시로 작성해둠, 실제 사용X
-  stopContainer(): any {
-    const container = Dockerode.prototype.getContainer('<container_name>');
-
-    container.stop((err, data) => {
-      if (err) {
-        console.log('container error when stop ' + err);
-      } else {
-        return data;
-      }
+    const container = await this.docker.createContainer({
+      Image: image,
+      Tty: true,
+      Cmd: ['/bin/sh'],
+      OpenStdin: true,
+      StdinOnce: false,
+      name: containerName,
+      HostConfig: {
+        NetworkMode: networkId,
+      },
     });
+    console.log(container);
+    await container.start(); // 컨테이너 실행
+
+    const data = await container.inspect();
+
+    const containerInfo = {
+      containerName: data.Name.replace('/', ''),
+      containerIP: data.NetworkSettings.IPAddress,
+      containerMac: data.NetworkSettings.MacAddress,
+    };
+    return containerInfo;
+  }
+  catch(error) {
+    throw new Error(`컨테이너 배포 중 오류가 발생했습니다: ${error.message}`);
   }
 }
