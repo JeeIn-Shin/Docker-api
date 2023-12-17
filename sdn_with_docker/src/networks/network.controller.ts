@@ -2,7 +2,7 @@ import { Controller, Get, Body } from '@nestjs/common';
 import { NetworkService } from './network.service';
 import { ContainerNetworkInfo } from './interface/network.interface';
 
-@Controller('containers')
+@Controller('/networks')
 export class NetworkController {
   constructor(private readonly networkService: NetworkService) {}
 

@@ -29,10 +29,10 @@ export class ContainerService {
           const networkId = data.NetworkSettings.Networks[data.Id];
 
           return {
-            name: containerName,
-            ip: ipAddress,
-            mac: macAddress,
-            networkId: networkId,
+            containerName: containerName,
+            containerIP: ipAddress,
+            containerMac: macAddress,
+            networkID: networkId,
           };
         }),
       );
@@ -55,7 +55,7 @@ export class ContainerService {
         Image: image,
         name: containerName,
         HostConfig: {
-          PortBindings: '3000', //특정 포트번호 설정 임시로 3000으로 설정해둠
+          PortBindings: '8082', //특정 포트번호 설정 임시로 3000으로 설정해둠
           NetworkMode: networkId,
         },
       });
@@ -65,9 +65,9 @@ export class ContainerService {
       const data = await container.inspect();
 
       const containerInfo = {
-        name: data.Name.replace('/', ''),
-        ip: data.NetworkSettings.IPAddress,
-        mac: data.NetworkSettings.MacAddress,
+        containerName: data.Name.replace('/', ''),
+        containerIP: data.NetworkSettings.IPAddress,
+        containerMac: data.NetworkSettings.MacAddress,
       };
 
       return containerInfo;

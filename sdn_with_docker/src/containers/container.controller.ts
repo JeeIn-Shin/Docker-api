@@ -13,9 +13,13 @@ export class ContainerController {
   @Post('deploy')
   deployContainer(@Body() requestBody: any): Promise<any> {
     const image = requestBody.image;
-    const name = requestBody.name;
+    const containerName = requestBody.containerName;
     const networkId = requestBody.networkId;
 
-    return this.containersSerivce.deployContainer(image, name, networkId);
+    return this.containersSerivce.deployContainer(
+      image,
+      containerName,
+      networkId,
+    );
   }
 }
